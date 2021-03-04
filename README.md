@@ -19,14 +19,13 @@ For more information, please visit [https://support.mfkessai.co.jp/hc/ja](https:
 
 ### regenerate
 ```
-make client/ruby/generate
+make generate
 ```
 
 ### spec
 ```
-cd ./clients/ruby
 bundle install
-bundle exec rspec 
+bundle exec rspec or make spec
 ```
 
 it may be failed because of Open Api Generator has bugs. Fix manually and Commit it
