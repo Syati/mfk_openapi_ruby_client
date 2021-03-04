@@ -1,0 +1,2988 @@
+swagger: "2.0"
+info:
+  title: Money Forward Kessai API v2
+  description: Money Forward Kessai REST API
+  termsOfService: 'https://corp.mfkessai.co.jp/images/terms/mfkessai.pdf'
+  contact:
+    name: 'Support Center'
+    url: 'https://support.mfkessai.co.jp/hc/ja'
+    email: 'api.support@mfkessai.co.jp'
+  version: "2.6.7"
+  license:
+    name: ''
+host: 'sandbox-api.mfkessai.co.jp'
+basePath: '/v2'
+schemes:
+  - https
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json'
+security:
+  - apikey: []
+securityDefinitions:
+  apikey:
+    description: >-
+      管理画面で取得できるapikeyを`HTTP Header`に `apikey` Headerとして設定してください。
+    name: apikey
+    type: apiKey
+    in: header
+definitions:
+  Error:
+    description: エラー内容の詳細です。4xxのエラーコードとともに返却されます。
+    type: object
+    properties:
+      code:
+        description: エラーコードです。それぞれの説明については、[エラーコード](https://mfkessai.co.jp/developer/v2/docs/#error_codes)を参照してください。
+        type: string
+        enum:
+          - unavailable_seller
+          - not_found
+          - request_canceled
+          - already_exists
+          - seller_setting_required
+          - invalid_json_format
+          - invalid_after
+          - invalid_before
+          - invalid_limit
+          - out_of_range_by_after
+          - out_of_range_by_before
+          - invalid_amount_per_tax_rate_type_amount
+          - invalid_amount_per_tax_rate_type_tax_rate_type
+          - invalid_created_at_from
+          - invalid_created_at_to
+          - invalid_canceled_at_from
+          - invalid_canceled_at_to
+          - invalid_accepted_at_from
+          - invalid_accepted_at_to
+          - invalid_billing_accepted_at_from
+          - invalid_billing_accepted_at_to
+          - invalid_customer_destination
+          - invalid_customer_has_alert
+          - invalid_customer_id
+          - invalid_customer_name
+          - invalid_customer_number
+          - invalid_customer_payment_method
+          - invalid_destination_address1
+          - invalid_destination_address2
+          - invalid_destination_cc_emails
+          - invalid_destination_department
+          - invalid_destination_email
+          - invalid_destination_id
+          - invalid_destination_name
+          - invalid_destination_name_kana
+          - invalid_destination_tel
+          - invalid_destination_title
+          - invalid_destination_zip_code
+          - invalid_customer_examination_id
+          - invalid_customer_examination_address1
+          - invalid_customer_examination_address2
+          - invalid_customer_examination_amount
+          - invalid_customer_examination_amount_with_balance
+          - invalid_customer_examination_business_description
+          - invalid_customer_examination_business_type
+          - invalid_customer_examination_corporate_number
+          - invalid_customer_examination_email
+          - invalid_customer_examination_end_date
+          - invalid_customer_examination_remark
+          - invalid_customer_examination_representative_name
+          - invalid_customer_examination_status
+          - invalid_customer_examination_tel
+          - invalid_customer_examination_website
+          - invalid_customer_examination_zip_code
+          - invalid_credit_facility_end_date_from
+          - invalid_credit_facility_end_date_to
+          - invalid_credit_facility_id
+          - invalid_credit_facility_start_date_from
+          - invalid_credit_facility_start_date_to
+          - invalid_credit_facility_status
+          - invalid_transaction_amount
+          - invalid_transaction_amounts_per_tax_rate_type
+          - invalid_transaction_billing
+          - invalid_transaction_billing_condition
+          - invalid_transaction_details
+          - invalid_transaction_detail_amount
+          - invalid_transaction_detail_description
+          - invalid_transaction_detail_quantity
+          - invalid_transaction_detail_tax_included_type
+          - invalid_transaction_detail_tax_rate_type
+          - invalid_transaction_detail_unit_price
+          - invalid_transaction_date
+          - invalid_transaction_date_from
+          - invalid_transaction_date_to
+          - invalid_transaction_due_date
+          - invalid_transaction_duplicate_invoice_delivery_method
+          - invalid_transaction_invoice_delivery_methods
+          - invalid_transaction_issue_date
+          - invalid_transaction_id
+          - invalid_transaction_number
+          - invalid_transaction_status
+          - not_cancelable_transaction_status
+          - invalid_billing_due_date_from
+          - invalid_billing_due_date_to
+          - invalid_billing_id
+          - invalid_billing_issue_date_from
+          - invalid_billing_issue_date_to
+          - invalid_billing_status
+          - invalid_billing_unpaid
+          - invalid_payout_date_from
+          - invalid_payout_date_to
+          - invalid_payout_id
+          - invalid_payout_status
+          - invalid_payout_transaction_id
+      message:
+        description: エラー発生原因に関する情報です。
+        type: string
+      param:
+        description: 何らかの値に関連するエラーの場合その値が入ります。
+        type: string
+      type:
+        description: エラー種別です。
+        type: string
+        enum:
+          - already_exisits_error
+          - conflict_operation_error
+          - invalid_argument_error
+          - not_found_error
+          - rate_limit_error
+          - request_canceled
+          - unavailable_seller
+          - seller_setting_required
+    example:
+      code: invalid_after
+      message: parameter must be a valid one.
+      param: 9R6M-VMAN
+  Errors:
+    description: 4xx系のエラーが発生した場合にエラー情報を返します。エラーObjectを配列として複数返します。
+    type: array
+    items:
+      $ref: '#/definitions/Error'
+    example:
+      - code: invalid_after
+        message: parameter must be a valid one.
+        param: 9R6M-VMAN
+  Pagination:
+    description: ページネーション情報です。各Objectの一覧取得の際にリストとともに返却されます。この情報をもとにページ繰りを行うことができます。
+    type: object
+    properties:
+      end:
+        description: この一覧に含まれるリソースのうち最後のリソースのIDです。次ページがある場合は、この値をクエリパラメーター`after`に設定することで次ページを取得することができます。
+        type: string
+        example: 7679-YW36
+      has_next:
+        description: 次ページがある場合は`true`、ない場合は`false`が返却されます。
+        type: boolean
+        default: false
+        example: true
+      has_previous:
+        description: 前ページがある場合は`true`、ない場合は`false`が返却されます。
+        type: boolean
+        default: false
+        example: false
+      limit:
+        description: ページ当たりの最大件数です。
+        type: integer
+        example: 20
+      start:
+        description: この一覧に含まれるリソースのうち最初のリソースのIDです。前ページがある場合は、この値をクエリパラメーター`before`に設定することで前ページを取得することができます。
+        type: string
+        example: 9R6M-VMAN
+      total:
+        description: 条件に合致するリソースの全件数です。
+        type: integer
+        x-nullable: true
+        example: 143
+  Customer:
+    description: 顧客です。取引登録や与信枠取得などあらゆる機能を利用する起点となります。
+    type: object
+    properties:
+      created_at:
+        type: string
+        format: date-time
+        description: 顧客が登録された日時を示します。
+        example: "2019-04-01T10:36:43+09:00"
+      has_alert:
+        type: boolean
+        default: false
+        description: アラートの有無を示します。アラートがある場合は`true`、ない場合は`false`を返します。アラートがあると、自動で毎月付与されている与信枠が停止します。
+      id:
+        type: string
+        description: 顧客IDです。 Money Forward Kessaiによって発番される一意の識別子です。
+        example: 7679-YW36
+      name:
+        type: string
+        description: 顧客名です。
+        example: サンプル顧客
+      number:
+        type: string
+        description: 顧客に付与できる任意の顧客番号です。自動で付与される顧客IDとは別に、売り手様が独自に管理する識別子を登録することができます。ただし、売り手様の管理される顧客間で一意でなければなりません。
+        example: CUSTOMER0001
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`customer`が入ります。
+        enum:
+          - customer
+        example: customer
+      payment_method:
+        $ref: '#/definitions/PaymentMethod'
+      uri:
+        type: string
+        description: 顧客URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:customer:7679-YW36'
+    example:
+      created_at: "2019-04-01T10:36:43+09:00"
+      has_alert: false
+      id: 7679-YW36
+      name: サンプル顧客
+      number: CUSTOEMR001
+      object: customer
+      payment_method:
+        bank_transfer:
+          object: bank_transfer
+          account_number: "123456789"
+          bank_name: MEKESSAI銀行
+          branch_name: 大手町支店
+          holder_name: ﾏﾈ-ﾌｵﾜ-ﾄﾞｹﾂｻｲ(ｶ
+          type: current
+        object: payment_method
+      uri: 'mfk:customer:7679-YW36'
+  CustomerPayload:
+    description: 顧客登録情報です。顧客登録時に利用します。顧客には必ず一つの請求先が必要であるため同時に請求先一件も登録します。
+    type: object
+    properties:
+      destination:
+        description: 請求先情報です。
+        type: object
+        properties:
+          address1:
+            $ref: '#/definitions/Address1'
+          address2:
+            $ref: '#/definitions/Address2'
+          cc_emails:
+            type: array
+            items:
+              $ref: '#/definitions/Email'
+            description: 請求書をメール送付する際のCCメールアドレスです。最大で4つまで指定できます。
+            example:
+              - another.tanto1@example.jp
+              - another.tanto2@example.jp
+            maxItems: 4
+          department:
+            type: string
+            description: 担当者の部署名です。
+            example: 経理部
+            maxLength: 50
+          email:
+            $ref: '#/definitions/Email'
+          name:
+            type: string
+            description: 担当者氏名です。
+            example: 担当　太郎
+            maxLength: 30
+          name_kana:
+            type: string
+            description: 担当者名カナです。全角カタカナで入力してください。
+            example: タントウ　タロウ
+            maxLength: 60
+          tel:
+            $ref: '#/definitions/Tel'
+          title:
+            type: string
+            description: 担当者の役職です。
+            example: 部長
+            maxLength: 30
+          zip_code:
+            $ref: '#/definitions/ZipCode'
+        example:
+          address1: 東京都千代田区1-2-3
+          address2: サンプルビル3F
+          cc_emails:
+            - another.tanto1@example.jp
+            - another.tanto2@example.jp
+          department: 経理部
+          email: kessai.tanto@example.jp
+          name: 担当 太郎
+          name_kana: タントウ　タロウ
+          tel: 03-1234-5678
+          title: 部長
+          zip_code: 111-1111
+        required:
+          - address1
+          - email
+          - tel
+          - zip_code
+      customer_examination:
+        description: 与信枠審査申請情報です。与信枠審査申請で利用します
+        type: object
+        properties:
+          amount:
+            type: integer
+            description: >-
+              希望与信額です。審査通過の場合に付与される与信枠の金額になります。
+              現在与信枠が適用中の場合は、その与信額以下の金額は指定できません。0円を指定した場合は無視されます。
+              審査の結果減額されて与信枠付与されることもあります。
+            minimum: 1
+            maximum: 150000000
+            example: 200000
+          business_description:
+            type: string
+            description: 事業内容です。顧客の主なサービス、商材などを記載してください。
+            maxLength: 500
+            example: クラウド型企業間決済サービス
+          business_type:
+            type: string
+            description: 事業所区分です。法人(`corporate`)または、個人(`individual`)で指定してください。不明な場合は空にしてください。
+            enum:
+              - corporate
+              - individual
+            example: corporate
+          corporate_number:
+            type: string
+            description: 法人番号です。事業所区分(`business_type`)が法人(`corporate`)の場合にのみ指定してください。
+            pattern: ^\d{13}$
+            example: '1234567890123'
+          remark:
+            type: string
+            description: 与信枠審査に利用できるその他情報を記載できます。
+            maxLength: 500
+            example: 一部上場企業です。
+          representative_name:
+            type: string
+            description: 代表者氏名です。
+            maxLength: 30
+            example: 代表太郎
+          website:
+            type: string
+            description: 顧客企業のwebサイトです。
+            maxLength: 500
+            pattern: ^https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$
+            example: https://mfkessai.co.jp
+        example:
+          amount: 20000
+          business_description: クラウド型企業間決済サービス
+          business_type: corporate
+          corporate_number: '1234567890123'
+          remark: 一部上場企業です。
+          representative_name: 代表太郎
+          website: https://mfkessai.co.jp
+      name:
+        type: string
+        description: 顧客名です。
+        minLength: 1
+        maxLength: 50
+        example: サンプル顧客
+      number:
+        type: string
+        description: >-
+          顧客に付与できる任意の顧客番号です。Money Forward Kessaiが発番する顧客IDをとは別で、売り手様が独自に管理する識別子を登録することができます。
+          ただし、売り手様の所有する顧客間で一意である必要があります。
+        minLength: 1
+        maxLength: 100
+        example: CUSTOMER0001
+    required:
+      - destination
+      - name
+      - number
+  CustomerUpdatePayload:
+    description: 顧客更新情報です。顧客更新時に利用します。
+    type: object
+    properties:
+      number:
+        type: string
+        description: >-
+          顧客に付与できる任意の顧客番号です。Money Forward Kessaiが発番する顧客IDをとは別で、売り手様が独自に管理する識別子を登録することができます。
+          ただし、売り手様の所有する顧客間で一意である必要があります。指定がないか空文字の場合は更新されません。
+        maxLength: 100
+        example: CUSTOMER0001
+  PaymentMethod:
+    description: >-
+      顧客の支払方法です。口座振替(`AccountTransfer`)もしくは銀行振込(`BankTransfer`)のいずれかです。顧客の支払方法に応じたObjectが返却されます。
+      デフォルトでは銀行振込になっています。ただし、初回請求前には振込先口座が指定されていない場合があります。
+      口座振替に変更する場合には別途書面でのお手続きが必要であるため、サポートセンターへお問い合わせください。
+    type: object
+    minProperties: 1
+    properties:
+      account_transfer:
+        $ref: '#/definitions/AccountTransfer'
+      bank_transfer:
+        $ref: '#/definitions/BankTransfer'
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`payment_method`が入ります。
+        enum:
+          - payment_method
+        example: payment_method
+  AccountTransfer:
+    description: 口座振替に関する情報です。お支払方法が口座振替の顧客のみ利用できます。
+    type: object
+    properties:
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`account_transfer`が入ります。
+        enum:
+          - account_transfer
+        example: account_transfer
+  BankTransfer:
+    description: >-
+      銀行振込に関する情報です。お支払方法が銀行振込の顧客のみ利用できます。
+      初回請求前は振込先口座が未割当のため、`object`以外は空で返却されます。
+    type: object
+    properties:
+      account_number:
+        type: string
+        description: 振込先口座番号です。未割当の場合は空で返却されます。
+        example: '12345678'
+      bank_name:
+        type: string
+        description: 振込先銀行名です。未割当の場合は空で返却されます。
+        example: MFKESSSAI銀行
+      branch_name:
+        type: string
+        description: 振込先銀行支店名です。未割当の場合は空で返却されます。
+        example: 大手町支店
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`bank_transfer`が入ります。
+        enum:
+          - bank_transfer
+        example: bank_transfer
+      type:
+        type: string
+        description: 振込先口座種別です。`current`(当座)、`saving`(普通)の2種類のうちどちらかになります。未割当の場合は空で返却されます。
+        enum:
+          - current
+          - saving
+      holder_name:
+        type: string
+        description: 振込先口座名義です。必ず`ﾏﾈ-ﾌｵﾜ-ﾄﾞｹﾂｻｲ(ｶ`になります。未割当の場合は空で返却されます。
+        example: ﾏﾈ-ﾌｵﾜ-ﾄﾞｹﾂｻｲ(ｶ
+  Destination:
+    description: >-
+      請求先です。一つの顧客に対して複数作成することができます。請求先の情報を利用して請求書送付を行います。
+      <aside class="info">請求先は更新ができません。更新したい場合は新規登録をしてご利用ください。</aside>
+    type: object
+    properties:
+      address1:
+        $ref: '#/definitions/Address1'
+      address2:
+        $ref: '#/definitions/Address2'
+      cc_emails:
+        description: CCメールアドレスです。最大4件まで登録できます。
+        type: array
+        items:
+          $ref: '#/definitions/Email'
+        example:
+          - another.tanto1@example.jp
+          - another.tanto2@example.jp
+      created_at:
+        description: 請求先が登録された日時を示します。
+        type: string
+        format: date-time
+        example: '2019-04-01T10:36:43+09:00'
+      customer_id:
+        description: 顧客IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 7679-YW36
+      department:
+        description: 担当者の部署名です。
+        type: string
+        example: 経理部
+      email:
+        $ref: '#/definitions/Email'
+      id:
+        description: 請求先IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 7679-YW36
+      name:
+        description: 担当者名です。
+        type: string
+        example: 担当 太郎
+      name_kana:
+        description: 担当者名カナです。全角カタカナで入力してください。
+        type: string
+        example: タントウ タロウ
+      object:
+        description: このObjectの種別を示します。ここでは必ず`destination`が入ります。
+        type: string
+        enum:
+          - destination
+        example: destination
+      tel:
+        $ref: '#/definitions/Tel'
+      title:
+        description: 担当者の役職です。
+        type: string
+        example: 部長
+      uri:
+        description: 請求先URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        type: string
+        example: mfk:destination:7679-YW36
+      zip_code:
+        $ref: '#/definitions/ZipCode'
+    example:
+      address1: 東京都千代田区1-2-3
+      address2: サンプルビル3F
+      cc_emails:
+        - another.tanto1@example.jp
+        - another.tanto2@example.jp
+      created_at: '2019-04-01T10:36:43+09:00'
+      customer_id: 7679-YW36
+      department: 経理部
+      email: kessai.tanto@example.jp
+      id: WNAV-37R6
+      name: 担当 太郎
+      name_kana: タントウ　タロウ
+      object: destination
+      tel: 03-1234-5678
+      title: 部長
+      uri: mfk:destination:WNAV-37R6
+      zip_code: 111-1111
+  DestinationPayload:
+    description: 請求先登録情報です。請求先登録時に利用します。一つの顧客に対して複数の請求先を登録できます。
+    type: object
+    properties:
+      address1:
+        $ref: '#/definitions/Address1'
+      address2:
+        $ref: '#/definitions/Address2'
+      cc_emails:
+        type: array
+        items:
+          $ref: '#/definitions/Email'
+        description: 請求書をメール送付する際のCCメールアドレスです。最大で4件まで指定できます。
+        example:
+          - another.tanto1@example.jp
+          - another.tanto2@example.jp
+        maxItems: 4
+      customer_id:
+        description: 請求先を登録する顧客のIDです。
+        type: string
+        minLength: 1
+        example: 7679-YW36
+      department:
+        type: string
+        description: 担当者の部署名です。
+        example: 経理部
+        maxLength: 50
+      email:
+        $ref: '#/definitions/Email'
+      name:
+        type: string
+        description: 担当者氏名です。
+        example: 担当　太郎
+        maxLength: 30
+      name_kana:
+        type: string
+        description: 担当者名カナです。全角カタカナで入力してください。
+        example: タントウ　タロウ
+        maxLength: 60
+      tel:
+        $ref: '#/definitions/Tel'
+      title:
+        type: string
+        description: 担当者の役職です。
+        example: 部長
+        maxLength: 30
+      zip_code:
+        $ref: '#/definitions/ZipCode'
+    example:
+      address1: 東京都千代田区1-2-3
+      address2: サンプルビル3F
+      cc_emails:
+        - another.tanto1@example.jp
+        - another.tanto2@example.jp
+      customer_id: 7679-YW36
+      department: 経理部
+      email: kessai.tanto@example.jp
+      name: 担当 太郎
+      name_kana: タントウ　タロウ
+      tel: 03-1234-5678
+      title: 部長
+      zip_code: 111-1111
+    required:
+      - address1
+      - customer_id
+      - email
+      - tel
+      - zip_code
+  CustomerExamination:
+    description: >-
+      与信枠審査です。顧客に対する与信枠取得のために利用します。申請後２営業日以内に審査いたします。
+      自動与信枠審査を利用している場合は顧客登録と同時に与信枠審査も申請されます。
+    type: object
+    properties:
+      address1:
+        $ref: '#/definitions/Address1'
+      address2:
+        $ref: '#/definitions/Address2'
+      amount:
+        type: integer
+        description: 希望与信額です。審査通過の場合に付与される与信枠の希望金額になります。審査の結果減額されて与信枠付与されることもあります。
+        example: 200000
+      business_description:
+        type: string
+        description: 事業内容です。顧客の主なサービス、商材などです。
+        example: クラウド型企業間決済サービス
+      business_type:
+        type: string
+        description: 事業所区分です。法人(`corporate`)または、個人(`individual`)で指定されます。不明な場合は空になります。
+        enum:
+          - corporate
+          - individual
+        example: corporate
+      corporate_number:
+        type: string
+        description: 法人番号です。事業所区分(`business_type`)が法人(`corporate`)の場合にのみ利用されます。
+        example: '1234567890123'
+      created_at:
+        type: string
+        format: date-time
+        description: 与信枠審査の申請日時です。
+        example: '2019-02-18T10:21:34+09:00'
+      customer_id:
+        type: string
+        description: 顧客IDです。一意の識別子として自動で付与されます。
+        example: 7679-YW36
+      email:
+        $ref: '#/definitions/Email'
+      end_date:
+        type: string
+        format: date
+        description: >-
+          希望取引登録期間終了日です。この日付まで対象の与信枠を利用して取引登録ができます。
+        example: '2019-04-30'
+      id:
+        type: string
+        description: 与信枠審査IDです。一意の識別子として自動で付与されます。
+        example: '7679-YW36'
+      remark:
+        type: string
+        description: その他情報です。審査に利用できる情報を記載できます。
+        example: 一部上場企業です。
+      representative_name:
+        type: string
+        description: 代表者名です。
+        example: 代表太郎
+      start_date:
+        type: string
+        format: date
+        x-nullable: true
+        description: >-
+          希望取引登録期間開始日。この日付から対象の与信枠を利用して取引登録ができます。
+          手動での申請の場合、審査通過日となるため空で返却されます。自動与信枠審査による申請の場合は、月次での与信枠付与になり対象月の月初日となります。
+        example: '2019-04-01'
+      status:
+        type: string
+        description: >-
+          与信枠審査ステータスです。審査中(`unexamined`)、審査通過(`passed`)、審査否決(`rejected`)があります。審査通過の場合には与信枠が付与されています。
+        enum:
+          - unexamined
+          - passed
+          - rejected
+        example: passed
+        maxLength: 60
+      tel:
+        $ref: '#/definitions/Tel'
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`customer_examination`が入ります。
+        enum:
+          - customer_examination
+        example: customer_examination
+      uri:
+        type: string
+        description: 与信枠審査URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:customer_examination:7679-YW36'
+      website:
+        type: string
+        description: 顧客企業のwebサイトです。
+        example: https://mfkessai.co.jp
+      zip_code:
+        $ref: '#/definitions/ZipCode'
+    example:
+      address1: '東京都千代田区1-2-3'
+      address2: 'サンプルビル3F'
+      amount: 20000
+      business_description: 'クラウド型企業間決済サービス'
+      business_type: 'corporate'
+      corporate_number: '1234567890123'
+      created_at: '2019-02-18T10:20:34+09:00'
+      customer_id: '7679-YW36'
+      email: 'kessai.tanto@example.jp'
+      end_date: '2019-04-30'
+      id: 'WNAV-37R6'
+      remark: '一部上場企業です。'
+      representative_name: '代表太郎'
+      start_date: '2019-04-01'
+      status: 'passed'
+      tel: '03-1234-5678'
+      uri: 'mfk:customer_examination:WNAV-37R6'
+      website: 'https://mfkessai.co.jp'
+      zip_code: '111-1111'
+  CustomerExaminationPayload:
+    description: 与信枠審査申請情報です。与信枠審査申請で利用します。
+    type: object
+    properties:
+      address1:
+        $ref: '#/definitions/Address1'
+      address2:
+        $ref: '#/definitions/Address2'
+      amount:
+        type: integer
+        description: >-
+          希望与信額です。審査通過の場合に付与される与信枠の金額になります。現在与信枠が適用中の場合は、その与信額以下の金額は指定できません。
+          審査の結果減額されて与信枠付与されることもあります。
+        minimum: 1
+        maximum: 150000000
+        example: 200000
+      business_description:
+        type: string
+        description: 事業内容です。顧客の主なサービス、商材などを記載してください。
+        maxLength: 500
+        example: クラウド型企業間決済サービス
+      business_type:
+        type: string
+        description: 事業所区分です。法人(`corporate`)または、個人(`individual`)で指定してください。不明な場合は空にしてください。
+        enum:
+          - corporate
+          - individual
+        example: corporate
+      corporate_number:
+        type: string
+        description: 法人番号です。事業所区分(`business_type`)が法人(`corporate`)の場合にのみ指定してください。
+        pattern: ^\d{13}$
+        example: '1234567890123'
+      customer_id:
+        description: 与信枠審査を申請する顧客のIDです。
+        type: string
+        minLength: 1
+        example: 7679-YW36
+      email:
+        $ref: '#/definitions/Email'
+      end_date:
+        type: string
+        format: date
+        description: >-
+          希望取引登録期間終了日です。この日付まで対象の与信枠を利用して取引登録ができます。
+          直近三ヶ月の月末のみ指定できます。
+        example: '2019-04-30'
+      remark:
+        type: string
+        description: 与信枠審査に利用できるその他情報を記載できます。<br>Sandbox環境において与信枠審査で任意の結果を指定するためにこの値を用います。詳しくは[審査結果の操作](#environment_magic_number)を参照ください。
+        maxLength: 500
+        example: 一部上場企業です。
+      representative_name:
+        type: string
+        description: 代表者氏名です。
+        maxLength: 30
+        example: 代表太郎
+      tel:
+        $ref: '#/definitions/Tel'
+      website:
+        type: string
+        description: 顧客企業のwebサイトです。
+        maxLength: 500
+        pattern: ^https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,9}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$
+        example: https://mfkessai.co.jp
+      zip_code:
+        $ref: '#/definitions/ZipCode'
+    example:
+      address1: 東京都千代田区1-2-3
+      address2: サンプルビル3F
+      amount: 20000
+      business_description: クラウド型企業間決済サービス
+      business_type: corporate
+      corporate_number: '1234567890123'
+      customer_id: 7679-YW36
+      email: kessai.tanto@example.jp
+      end_date: 2019-04-30
+      remark: 一部上場企業です。
+      representative_name: 代表太郎
+      tel: 03-1234-5678
+      website: https://mfkessai.co.jp
+      zip_code: 111-1111
+    required:
+      - address1
+      - amount
+      - customer_id
+      - email
+      - end_date
+      - tel
+      - zip_code
+  CreditFacility:
+    description: 顧客の与信枠です。この枠内の取引登録であれば取引審査なしで登録することができます。
+    type: object
+    properties:
+      amount:
+        type: integer
+        description: 与信額です。取引登録期間(`start_date`~`end_date`)にこの金額までの取引であれば取引審査なしで登録することができます。
+        example: 200000
+      balance:
+        type: integer
+        description: 与信額残高です。与信額からこの与信枠を利用して登録された取引の合計金額を差し引いた金額です。現在与信枠を利用して登録できる取引金額を示しています。
+        example: 100000
+      customer_id:
+        type: string
+        description: 顧客IDです。一意の識別子として自動で付与されます。
+        example: 9R6M-VMAN
+      customer_examination_id:
+        type: string
+        description: 与信枠審査IDです。
+        example: 7679-YW36
+      end_date:
+        type: string
+        format: date
+        description: >-
+          取引登録期間終了日です。この日付まで対象の与信枠を利用して取引登録ができます。
+        example: '2019-04-30'
+      id:
+        type: string
+        description: 与信枠IDです。一意の識別子として自動で付与されます。
+        example: 7679-YW36
+      object:
+        type: string
+        description: このObjectの種別を示します。ここでは必ず`credit_facility`が入ります。
+        enum:
+          - credit_facility
+        example: credit_facility
+      start_date:
+        type: string
+        format: date
+        description: >-
+          取引登録期間開始日です。この日付から対象の与信枠を利用して取引登録ができます。
+        example: '2019-04-01'
+      status:
+        type: string
+        description: >-
+          与信枠ステータスです。未適用(`inactive`)、適用中(`active`)、期限切れ(`expired`)があります。
+          現在の日付が`start_date`~`end_date`の期間内であれば`active`、`start_date`よりも前であれば`inactive`、`end_date`を過ぎていれば`expired`になります。
+        enum:
+          - inactive
+          - active
+          - expired
+        example: inactive
+      uri:
+        type: string
+        description: 与信枠URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:credit_facility:7679-YW36'
+    example:
+      amount: 200000
+      balance: 100000
+      customer_examination_id: WNAV-37R6
+      customer_id: 9R6M-VMAN
+      end_date: 2019-04-30
+      id: 7679-YW36
+      start_date: 2019-04-01
+      status: inactive
+      uri: 'mfk:credit_facility:7679-YW36'
+  Transaction:
+    description: 取引です。
+    type: object
+    properties:
+      accepted_at:
+        description: 債権譲受日時です。
+        type: string
+        x-nullable: true
+        format: date-time
+        example: "2019-04-03T10:36:43+09:00"
+      amount:
+        description: 取引の合計金額です。**税込**金額になります。
+        type: integer
+        example: 2180
+      amounts_per_tax_rate_type:
+        description: 各税率種別毎の**税込**の合計金額です。各税率種別の取引明細行の小計を合計した値の税込金額になっています。
+        type: array
+        items:
+          $ref: '#/definitions/AmountPerTaxRateType'
+      billing:
+        description: 請求対象であるかをboolean値で表します。`true`の場合請求対象で、`false`の場合は請求対象ではないことを表します。
+        type: boolean
+        x-nullable: true
+        example: true
+      billing_accepted_at:
+        description: 請求依頼受領日時です。請求対象になった日時を表します。請求対象でない場合は空になります。
+        type: string
+        x-nullable: true
+        format: date-time
+        example: '2019-04-22T10:36:43+09:00'
+      billing_condition:
+        $ref: '#/definitions/BillingCondition'
+      billing_id:
+        description: 請求IDです。請求書にまとめられる単位のIDです。同じ請求IDを持つ取引とまとめられて請求書に記載されます。
+        type: string
+        example: 9R6M-VMAN
+      canceled_at:
+        description: 取引がキャンセルされた日時です。未キャンセルの場合は空になります。
+        type: string
+        x-nullable: true
+        format: date-time
+        example: '2019-04-22T10:36:43+09:00'
+      created_at:
+        description: 取引が登録された日時です。
+        type: string
+        format: date-time
+        example: "2019-04-01T10:36:43+09:00"
+      customer_id:
+        description: 顧客IDです。
+        type: string
+        example: 9PNG-VYR6
+      destination_id:
+        description: 請求先IDです。取引の請求先を示します。
+        type: string
+        example: WNAV-37R6
+      date:
+        description: 取引日です。売り手様と顧客様の間で取引を行った日付です。
+        type: string
+        format: date
+        example: '2019-04-01'
+      due_date:
+        description: 支払期限です。この日付を超えてMoney Forward Kessaiへの入金が確認できない場合は未入金になります。
+        type: string
+        format: date
+        example: '2019-04-30'
+      id:
+        description: 取引IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 7679-YW36
+      invoice_delivery_methods:
+        type: array
+        description: >-
+          請求書送付方法です。郵送(posting) またはメール送付(email)のうちから少なくとも１つになります。どちらも選択された場合、どちらの方法でも送付されます。
+          また、各取引で指定しなかった送付方法でも、請求にまとまった取引のうちでその送付方法を選択しているものがあれば、そちらの送付方法も採用されます。
+        items:
+          $ref: '#/definitions/InvoiceDeliveryMethod'
+        example:
+          - posting
+          - email
+      issue_date:
+        description: >-
+          請求書発行日です。請求書発送日については<a href="https://support.mfkessai.co.jp/hc/ja/articles/900002297303-%E8%AB%8B%E6%B1%82%E6%9B%B8%E7%99%BA%E8%A1%8C%E6%97%A5%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6" target="_blank">請求書発行日について</a>を参照ください。
+        type: string
+        format: date
+        example: '2019-04-20'
+      number:
+        description: 取引に付与できる任意の取引番号です。Money Forward Kessaiが自動で付与する取引IDとは別で、売り手様が独自に管理する識別子を登録することができます。ただし、売り手様の所有する取引間で一意である必要があります。
+        type: string
+        example: Transaction-0001
+      object:
+        description: このObjectの種別を示します。ここでは必ず`transaction`が入ります。
+        type: string
+        enum:
+          - transaction
+        example: transaction
+      status:
+        description: >-
+          取引ステータスです。審査中(`unexamined`)、審査通過(`passed`)、審査否決(`rejected`)、キャンセル済(`canceled`)があります。
+        type: string
+        enum:
+          - unexamined
+          - passed
+          - rejected
+          - canceled
+        example: passed
+      transaction_details:
+        description: 取引明細行です。
+        type: array
+        items:
+          $ref: '#/definitions/TransactionDetail'
+      uri:
+        description: 取引URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        type: string
+        example: 'mfk:transaction:7679-YW36'
+    example:
+      accepted_at: "2019-04-03T10:36:43+09:00"
+      amount: 5440
+      amounts_per_tax_rate_type:
+        - amount: 2200
+          tax_rate_type: 'normal_10'
+        - amount: 3240
+          tax_rate_type: 'reduced_8'
+      billing: true
+      billing_accepted_at: '2019-04-22T10:36:43+09:00'
+      billing_condition: "passed"
+      billing_id: 9R6M-VMAN
+      canceled_at: '2019-04-22T10:36:43+09:00'
+      created_at: "2019-04-01T10:36:43+09:00"
+      customer_id: "9PNG-VYR6"
+      date: '2019-04-10'
+      destination_id: WNAV-37R6
+      due_date: '2019-04-30'
+      id: 7679-YW36
+      invoice_delivery_method:
+        - posting
+        - email
+      issue_date: '2019-04-20'
+      number: Transaction-0001
+      object: transaction
+      status: passed
+      transaction_details:
+        - amount: 3000
+          description: 商品名A
+          tax_included_type: excluded
+          tax_rate_type: 'normal_10'
+          quantity: 3
+          unit_price: 1000
+        - amount: 3000
+          description: 商品名B
+          tax_included_type: excluded
+          tax_rate_type: 'reduced_8'
+          quantity: 3
+          unit_price: 1000
+        - amount: -1000
+          description: 商品名A 返品
+          tax_included_type: excluded
+          tax_rate_type: 'normal_10'
+          quantity: -1
+          unit_price: 1000
+      uri: 'mfk:transaction:7679-YW36'
+  TransactionDetail:
+    description: 取引明細です。請求書に記載される明細行になります。
+    type: object
+    properties:
+      amount:
+        description: >-
+          小計です。単価(`unit_price`)×数量(`quantity`)の金額、またはその税込金額です。
+        type: number
+        example: 12000
+      description:
+        description: 商品名などです。
+        type: string
+        example: 商品名A
+      object:
+        description: このObjectの種別を示します。ここでは必ず`transaction_detail`が入ります。
+        type: string
+        enum:
+          - transaction_detail
+        example: transaction_detail
+      tax_rate_type:
+        $ref: '#/definitions/TaxRateType'
+      unit_price:
+        description: 単価です。
+        type: number
+        example: 1000
+      quantity:
+        description: 数量です。
+        type: number
+        example: 3
+      tax_included_type:
+        $ref: '#/definitions/TaxIncludedType'
+    example:
+      amount: 3000
+      description: 商品名A
+      tax_rate_type: 'normal_10'
+      quantity: 3
+      unit_price: 1000
+  TransactionPayload:
+    description: 取引登録情報です。取引登録で利用します。
+    type: object
+    properties:
+      amount:
+        type: integer
+        description: >-
+          取引の税込合計金額です。各課税種別毎の税込金額(amounts_per_tax_rate_type)の合計である必要があります。また、負の値を指定することはできません。
+        minimum: 1
+        maximum: 2147483647
+        example: 5000
+      amounts_per_tax_rate_type:
+        description: 各課税種別毎の税込の合計金額です。各課税種別の取引明細行の小計を合計した値の税込金額になっていなければなりません。
+        type: array
+        items:
+          $ref: '#/definitions/AmountPerTaxRateType'
+        minItems: 1
+        example:
+          - amount: 1100
+            tax_rate_type: 'normal_10'
+          - amount: 1080
+            tax_rate_type: 'reduced_8'
+      billing_condition:
+        $ref: '#/definitions/BillingCondition'
+      date:
+        type: string
+        format: date
+        description: 取引日です。売り手様と顧客の間で取引を行った日付を指定してください。
+        example: '2019-04-01'
+      destination_id:
+        type: string
+        description: 請求先IDです。取引の請求先を指定してください。
+        minLength: 1
+        example: WNAV-37R6
+      due_date:
+        type: string
+        format: date
+        description: 支払期限です。
+        example: '2019-04-30'
+      invoice_delivery_methods:
+        type: array
+        description: >-
+          請求書送付方法です。郵送(posting) またはメール送付(email)のうちから少なくとも１つを指定してください。どちらも選択された場合、どちらの方法でも送付されます。
+          また、各取引で指定しなかった送付方法でも、請求にまとまった取引のうちでその送付方法を選択しているものがあれば、そちらの送付方法も採用されます。
+        items:
+          $ref: '#/definitions/InvoiceDeliveryMethod'
+        minItems: 1
+        maxItems: 2
+        example:
+          - posting
+          - email
+      issue_date:
+        type: string
+        format: date
+        description: >-
+          請求書発行日です。請求書が発行される日付を指定します。指定した日付が営業日でない場合は翌営業日になります。また、請求書送付日については[こちら](https://support.mfkessai.co.jp/hc/ja/articles/900002297303-%E8%AB%8B%E6%B1%82%E6%9B%B8%E7%99%BA%E8%A1%8C%E6%97%A5%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)を参照ください。
+        example: '2019-04-20'
+      number:
+        type: string
+        description: >-
+          取引に付与できる任意の取引番号です。Money Forward Kessaiが自動で付与する取引IDとは別で、売り手様が独自に管理する識別子を登録することができます。ただし、売り手様の所有する取引間で一意である必要があります。
+        minLength: 1
+        maxLength: 100
+        example: Transaction-0001
+      transaction_details:
+        type: array
+        description: 取引明細行です。
+        items:
+          $ref: '#/definitions/TransactionDetailPayload'
+        minItems: 1
+        maxItems: 500
+        example:
+          - amount: 3000
+            description: 商品名A
+            tax_included_type: excluded
+            tax_rate_type: 'normal_8'
+            quantity: 3
+            unit_price: 1000
+          - amount: 3000
+            description: 商品名B
+            tax_included_type: excluded
+            tax_rate_type: 'reduced_8'
+            quantity: 3
+            unit_price: 1000
+          - amount: -1000
+            description: 商品名A 返品
+            tax_included_type: excluded
+            tax_rate_type: 'normal_8'
+            quantity: 1
+            unit_price: -1000
+    required:
+      - amount
+      - date
+      - destination_id
+      - due_date
+      - invoice_delivery_methods
+      - issue_date
+      - number
+      - transaction_details
+      - amounts_per_tax_rate_type
+    example:
+      amount: 5440
+      amounts_per_tax_rate_type:
+        - amount: 2200
+          tax_rate_type: 'normal_10'
+        - amount: 3240
+          tax_rate_type: 'reduced_8'
+      billing_condition: 'passed'
+      date: '2019-04-10'
+      destination_id: WNAV-37R6
+      due_date: '2019-04-30'
+      invoice_delivery_methods:
+        - posting
+        - email
+      issue_date: '2019-04-20'
+      number: Transaction-0001
+      transaction_details:
+        - amount: 3000
+          description: 商品名A
+          tax_included_type: excluded
+          tax_rate_type: 'normal_10'
+          quantity: 3
+          unit_price: 1000
+        - amount: 3000
+          description: 商品名B
+          tax_included_type: excluded
+          tax_rate_type: 'reduced_8'
+          quantity: 3
+          unit_price: 1000
+        - amount: -1000
+          description: 商品名A 返品
+          tax_included_type: excluded
+          tax_rate_type: 'normal_10'
+          quantity: 1
+          unit_price: -1000
+  TransactionDetailPayload:
+    type: object
+    properties:
+      amount:
+        type: number
+        description: 小計です。単価(`unit_price`)×数量(`quantity`)の金額を指定してください。またはその金額の税込金額も指定可能です。
+        minimum: -2147483648
+        maximum: 2147483647
+        multipleOf: 0.0001
+        example: 12000
+      amount_str:
+        type: string
+        description: 小計を文字列で指定してください。こちらが指定されている場合、数値型のamountは無視されます。単価(`unit_price`)×数量(`quantity`)の金額を指定してください。
+        pattern: ^-?\d+(\.\d{1,4})?$
+        minLength: 1
+        maxLength: 16
+        example: "12000.5"
+      description:
+        type: string
+        minLength: 1
+        maxLength: 250
+        description: 商品名などです。<br>Sandbox環境において取引審査で任意の結果を指定するためにこの値を用います。詳しくは[審査結果の操作](#environment_magic_number)を参照ください。
+        example: 商品名A
+      tax_included_type:
+        $ref: '#/definitions/TaxIncludedType'
+      tax_rate_type:
+        $ref: '#/definitions/TaxRateType'
+      quantity:
+        type: number
+        description: 数量を指定してください。
+        multipleOf: 0.0001
+        minimum: 0
+        maximum: 2147483647
+        example: 3
+      quantity_str:
+        type: string
+        pattern: ^\d+(\.\d{1,4})?$
+        minLength: 1
+        maxLength: 16
+        description: 数量を文字列で指定してください。こちらが指定されている場合、数値型のquantityは無視されます。
+        example: "3.14"
+      unit_price:
+        type: number
+        description: 単価を指定してください。
+        multipleOf: 0.0001
+        minimum: -2147483648
+        maximum: 2147483647
+        example: 1000
+      unit_price_str:
+        type: string
+        pattern: ^-?\d+(\.\d{1,4})?$
+        minLength: 1
+        maxLength: 16
+        description: 単価を文字列で指定してください。こちらが指定されている場合、数値型のunit_priceは無視されます。
+        example: "1.5"
+    required:
+      - description
+      - tax_included_type
+      - tax_rate_type
+    example:
+      amount: 3000
+      description: 商品名A
+      tax_included_type: excluded
+      tax_rate_type: 'normal_10'
+      quantity: 3
+      unit_price: 1000
+  Billing:
+    description: 請求です。取引のうち、請求先・支払期限・請求書発行日・取引登録方式が同一の取引が同じ請求にまとめられます。
+    type: object
+    properties:
+      amount:
+        type: integer
+        description: 請求の**税込**の合計金額です。請求に含まれる取引金額の合計です。
+        example: 12000
+      amounts_per_tax_rate_type:
+        description: 各税率種別毎の**税込**の合計金額です。各税率種別の取引金額を合計した値になっています。
+        type: array
+        items:
+          $ref: '#/definitions/AmountPerTaxRateType'
+      customer_id:
+        description: 顧客IDです。請求の顧客を示します。
+        type: string
+        example: WNAV-37R6
+      destination_id:
+        description: 請求先IDです。請求先を示します。
+        type: string
+        example: 7679-YW36
+      due_date:
+        description: 支払期限です。
+        type: string
+        format: date
+        example: '2019-04-30'
+      id:
+        description: 請求IDです。一意の識別子として自動で付与されます。請求先ID・支払期限・請求書発行日・取引登録方式が同一の取引がこの請求によってまとめられます。請求書は請求をもとに発行されます。
+        type: string
+        example: 9R6M-VMAN
+      invoice_delivery_methods:
+        type: array
+        description: >-
+          請求書送付方法です。郵送(posting) またはメール送付(email)のうちから少なくとも１つを指定してください。どちらも選択された場合、どちらの方法でも送付されます。
+          また、各取引で指定しなかった送付方法でも、請求にまとまった取引のうちでその送付方法を選択しているものがあれば、そちらの送付方法も採用されます。
+        items:
+          $ref: '#/definitions/InvoiceDeliveryMethod'
+        example:
+          - posting
+          - email
+      issue_date:
+        type: string
+        format: date
+        description: 請求書発行日です。請求書送付日については[こちら](https://support.mfkessai.co.jp/hc/ja/articles/900002297303-%E8%AB%8B%E6%B1%82%E6%9B%B8%E7%99%BA%E8%A1%8C%E6%97%A5%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)をご参照ください。
+        example: '2019-04-20'
+      object:
+        description: このObjectの種別を示します。ここでは必ず`billing`が入ります。
+        type: string
+        enum:
+          - billing
+        example: billing
+      status:
+        description: >-
+          請求ステータスです。請求予定(`scheduled`)、請求書発行済(`invoice_issued`) 、口座振替通知済(`account_transfer_notified`)で指定されます。
+        type: string
+        enum:
+          - scheduled
+          - invoice_issued
+          - account_transfer_notified
+        example: invoice_issued
+      unpaid:
+        description: 未入金情報です。請求に対して未入金がある場合のみ返却されます。
+        type: object
+        properties:
+          shortage_amount:
+            description: 未入金額です。
+            type: integer
+            example: 12000
+          updated_date:
+            description: 入金情報が最後に更新された日付です。この日付以降に入金されている可能性があります。
+            type: string
+            format: date
+            example: '2019-04-30'
+      uri:
+        description: 請求URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        type: string
+        example: 'mfk:billing:9R6M-VMAN'
+    example:
+      amount: 21800
+      amounts_per_tax_rate_type:
+        - amount: 11000
+          tax_rate_type: 'normal_10'
+        - amount: 10800
+          tax_rate_type: 'reduced_8'
+      customer_id: WNAV-37R6
+      destination_id: 7679-YW36
+      due_date: 2019-04-30
+      id: 9R6M-VMAN
+      invoice_delivery_method:
+        - posting
+        - email
+      issue_date: 2019-04-01
+      object: billing
+      status: scheduled
+      unpaid:
+        shortage_amount: 12000
+        updated_date: 2019-04-30
+      uri: 'mfk:billing:9R6M-VMAN'
+  Address1:
+    description: 都道府県・市区町村・番地です。必ず都道府県名から始めてください。
+    type: string
+    minLength: 1
+    maxLength: 100
+    pattern: '^(北海道|青森県|岩手県|宮城県|秋田県|山形県|福島県|茨城県|栃木県|群馬県|埼玉県|千葉県|東京都|神奈川県|新潟県|富山県|石川県|福井県|山梨県|長野県|岐阜県|静岡県|愛知県|三重県|滋賀県|京都府|大阪府|兵庫県|奈良県|和歌山県|鳥取県|島根県|岡山県|広島県|山口県|徳島県|香川県|愛媛県|高知県|福岡県|佐賀県|長崎県|熊本県|大分県|宮崎県|鹿児島県|沖縄県).+$'
+    example: 東京都千代田区1-2-3
+  Address2:
+    description: 建物名・部屋番号などです。
+    type: string
+    maxLength: 100
+    example: サンプルビル3F
+  Tel:
+    description: 電話番号です。ハイフン有無は任意になります。
+    type: string
+    pattern: '^((0(\d{1}-?\d{4}|\d{2}-?\d{3}|\d{3}-?\d{2}|\d{4}-?\d{1}|[5789]0-?\d{4})-?\d{4})|(0120-?\d{3}-?\d{3}))$'
+    example: 03-1234-5678
+  ZipCode:
+    description: 郵便番号です。ハイフン有無は任意になります。但しハイフン無しで登録されますと、請求書にもハイフン無しで記載されます。
+    type: string
+    pattern: '^\d{3}-?\d{4}$'
+    example: 111-1111
+  Email:
+    description: メールアドレスです。email形式で指定してください。
+    type: string
+    pattern: '^[\w.+-]{1,64}@[a-z\d](?:[a-z\d-]{0,253}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,253}[a-z\d])?)+$'
+    maxLength: 255
+    example: kessai.tanto@example.jp
+  BillingCondition:
+    type: string
+    description: >-
+      請求される条件です。審査結果に関わらずすべて請求する(`all`)、審査通過の取引のみ請求する(`passed`)のうちから選択してください。<br>
+      空の場合は管理画面の「請求対象の設定」で設定された条件で登録されます。請求対象について詳しくは[こちら](https://support.mfkessai.co.jp/hc/ja/articles/900002241626)を参照ください。
+    enum:
+      - passed
+      - all
+  InvoiceDeliveryMethod:
+    description: 請求書送付方法です。郵送(posting) またはメール送付(email)のいずれかを指定してください。
+    type: string
+    enum:
+      - posting
+      - email
+    example: posting
+  TaxRateType:
+    description: >-
+      税率種別です。非課税(`non_taxable`)、消費税8%(`normal_8`)、消費税10%(`normal_10`)、軽減税率8%(`reduced_8`)、経過措置8%(`transitional_measures_8`)、対象外(`inapplicable`)のうちいずれかを指定してください。
+      返り値で空の場合は登録時に指定されなかったことを表します。
+    type: string
+    enum:
+      - non_taxable
+      - normal_8
+      - normal_10
+      - reduced_8
+      - transitional_measures_8
+      - inapplicable
+    example: 'normal_10'
+  AmountPerTaxRateType:
+    description: 各税率種別毎の**税込**の合計金額です。
+    type: object
+    properties:
+      amount:
+        description: 対象税率種別毎の合計金額です。**税込**金額になります。
+        type: integer
+        minimum: -2147483648
+        maximum: 2147483647
+        example: 12000
+      tax_rate_type:
+        $ref: '#/definitions/TaxRateType'
+    required:
+      - amount
+      - tax_rate_type
+    example:
+      amount: 11000
+      tax_rate_type: 'normal_10'
+  TaxIncludedType:
+    description: 取引明細の単価(`unit_price`), 小計(`amount`)の値が税込(`included`)か税抜(`excluded`)かを示します。空の場合は登録時に指定がなかったことを表します。
+    type: string
+    enum:
+      - included
+      - excluded
+  Payout:
+    description: Money Forward Kessaiから売り手様への金額確定済みの振込です。
+    type: object
+    properties:
+      amount:
+        description: 振込金額です。
+        type: integer
+        example: 1000000
+      collected_amount:
+        description: 振込の対象となる回収金額です。
+        type: integer
+        x-nullable: true
+        example: 200000
+      deduction:
+        $ref: '#/definitions/Deduction'
+      id:
+        description: 振込IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 7679-YW36
+      object:
+        description: このObjectの種別を示します。ここでは必ず`payout`が入ります。
+        type: string
+        enum:
+          - payout
+        example: payout
+      payout_date:
+        type: string
+        format: date
+        description: 振込予定日です。
+        example: '2019-04-01'
+      receivables_amount:
+        description: 振込の対象となる債権金額です。
+        type: integer
+        x-nullable: true
+        example: 1100000
+      status:
+        description: >-
+          振込ステータスです。振込手続中(`in_progress`)、振込完了(`completed`)があります。
+        type: string
+        enum:
+          - in_progress
+          - completed
+        example: completed
+      type:
+        description: >-
+          振込種別です。通常振込(`normal`)、早期振込(`early`)があります。
+        type: string
+        enum:
+          - normal
+          - early
+        example: normal
+      uri:
+        type: string
+        description: 振込URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:payout:7679-YW36'
+    example:
+      amount: 300800
+      collected_amount: 200000
+      receivables_amount: 110000
+      deduction:
+        amount: 9400
+        returned_credit_amount: 500
+        tax_free:
+          amount: 3200
+          commission_amount: 2200
+          early_payout_commission_amount: 1000
+        taxable:
+          amount: 7000
+          convenience_billing:
+            charge: 15000
+            quantity: 100
+            unit_price: 150
+          basic_monthly_charge: 4500
+          billing_charge:
+            amount: 2000
+            unit_price: 200
+            quantity: 10
+          posting:
+            amount: 500
+            unit_price: 100
+            quantity: 5
+        tax:
+          rate_type: 'normal_10'
+          amount: 500
+        untaxable:
+          amount: 15000
+          revenue_stamp:
+            amount: 15000
+            quantity: 100
+            unit_price: 150
+      id: 7679-YW36
+      payout_date: 2019-07-29
+      status: completed
+      type: normal
+      uri: 'mfk:payout:7679-YW36'
+  Deduction:
+    description: 振込から控除される金額とその内訳です。
+    type: object
+    properties:
+      amount:
+        description: 債権合計額から控除される合計金額です。
+        type: integer
+        x-nullable: true
+        example: 10000
+      canceled_reconciliation_amount:
+        description: 入金消込の解除による回収金額の返金額です。
+        type: integer
+        x-nullable: true
+        example: 10000
+      returned_credit_amount:
+        description: キャンセルによる債権金額の返金額です。
+        type: integer
+        x-nullable: true
+        example: 10000
+      tax:
+        description: 消費税です。
+        type: object
+        properties:
+          amount:
+            description: 消費税額です。
+            type: integer
+            x-nullable: true
+            example: 10000
+          rate_type:
+            $ref: '#/definitions/TaxRateType'
+      taxable:
+        description: 課税対象の控除金額とその内訳です。郵送料と月額基本料が課税対象となります。
+        type: object
+        properties:
+          amount:
+            description: 課税対象の控除金額です。
+            type: integer
+            x-nullable: true
+            example: 25000
+          basic_monthly_charge:
+            description: 月額基本料金です。
+            type: integer
+            x-nullable: true
+            example: 10000
+          billing_charge:
+            description: 付随請求業務手数料とその内訳です。
+            type: object
+            properties:
+              amount:
+                description: 付随請求業務手数料です。
+                type: integer
+                x-nullable: true
+                example: 2000
+              quantity:
+                description: 請求件数です。
+                type: integer
+                x-nullable: true
+                example: 10
+              unit_price:
+                description: 請求１件あたりの付随請求業務手数料です。
+                type: integer
+                x-nullable: true
+                example: 200
+          posting:
+            description: 郵送料金とその内訳です。
+            type: object
+            properties:
+              amount:
+                description: 郵送料です。
+                type: integer
+                x-nullable: true
+                example: 15000
+              quantity:
+                description: 郵送件数です。
+                type: integer
+                x-nullable: true
+                example: 100
+              unit_price:
+                description: 郵送１件あたりの郵送料です。
+                type: integer
+                x-nullable: true
+                example: 150
+          convenience_billing:
+            description: コンビニ払込手数料とその内訳です。
+            type: object
+            properties:
+              charge:
+                description: コンビニ払込手数料です。
+                type: integer
+                x-nullable: true
+                example: 15000
+              quantity:
+                description: コンビニ払込件数です。
+                type: integer
+                x-nullable: true
+                example: 100
+              unit_price:
+                description: コンビニ払込１件あたりの手数料です。
+                type: integer
+                x-nullable: true
+                example: 150
+      tax_free:
+        description: 非課税の控除金額とその内訳です。手数料と早期振込手数料が非課税となります。
+        type: object
+        properties:
+          amount:
+            description: 非課税の控除金額です。
+            type: integer
+            x-nullable: true
+            example: 1000
+          commission_amount:
+            description: 手数料の金額です。
+            type: integer
+            x-nullable: true
+            example: 10000
+          early_payout_commission_amount:
+            description: 早期振込手数料の金額です。
+            type: integer
+            x-nullable: true
+            example: 10000
+      untaxable:
+        description: 不課税の控除金額とその内訳です。収入印紙代が不課税となります。
+        type: object
+        properties:
+          amount:
+            description: 不課税の控除金額です。
+            type: integer
+            x-nullable: true
+            example: 15000
+          revenue_stamp:
+            description: 収入印紙代とその内訳です。
+            type: object
+            properties:
+              amount:
+                description: 収入印紙代です。
+                type: integer
+                x-nullable: true
+                example: 15000
+              quantity:
+                description: 収入印紙件数です。
+                type: integer
+                x-nullable: true
+                example: 100
+              unit_price:
+                description: 収入印紙１件あたりの料金です。
+                type: integer
+                x-nullable: true
+                example: 150
+    example:
+      amount: 10000
+      returned_credit_amount: 500
+      tax:
+        rate_type: 'normal_10'
+        amount: 500
+      taxable:
+        amount: 20000
+        convenience_billing:
+          charge: 15000
+          quantity: 100
+          unit_price: 150
+        basic_monthly_charge: 4500
+        billing_charge:
+          amount: 2000
+          unit_price: 200
+          quantity: 10
+        posting:
+          amount: 500
+          unit_price: 100
+          quantity: 5
+      tax_free:
+        amount: 4000
+        commission_amout: 3000
+        early_payout_commission_amount: 1000
+      untaxable:
+        amount: 15000
+        revenue_stamp:
+          amount: 15000
+          quantity: 100
+          unit_price: 150
+  PayoutTransaction:
+    description: 売り手様へ振込に紐づく債権です。
+    type: object
+    properties:
+      accepted_at:
+        type: string
+        format: date-time
+        description: 債権譲受日時です。
+        example: '2019-04-01T10:36:43+09:00'
+      amount:
+        description: 債権金額です。
+        type: integer
+        example: 10000
+      commission_amount:
+        description: 手数料の金額です。
+        type: integer
+        x-nullable: true
+        example: 10000
+      commission_rate:
+        description: 手数料率です。
+        type: number
+        x-nullable: true
+        example: 2.0
+      early_payout_commission_amount:
+        description: 早期振込手数料です。
+        type: integer
+        x-nullable: true
+        example: 10000
+      early_payout_commission_rate:
+        description: 早期振込手数料率です。
+        type: number
+        x-nullable: true
+        example: 4.0
+      id:
+        description: 債権IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 9NR3-P9A6
+      object:
+        description: このObjectの種別を示します。ここでは必ず`payout_transaction`が入ります。
+        type: string
+        enum:
+          - payout_transaction
+        example: payout_transaction
+      payout_date:
+        type: string
+        format: date
+        description: 振込予定日です。早期振込の場合、`standard_payout_date`よりも早くなります。
+        example: '2019-04-15'
+      payout_id:
+        description: 債権が含まれる振込のIDです。
+        type: string
+        example: 7679-YW36
+      standard_payout_date:
+        type: string
+        format: date
+        description: 通常の振込予定日です。
+        example: '2019-05-01'
+      transaction_id:
+        type: string
+        description: 取引IDです。この債権が紐づく取引を示します。
+        example: GY9N-EWNM
+      uri:
+        type: string
+        description: 債権URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:payout_transaction:9NR3-P9A6'
+    example:
+      accepted_at: '2019-04-01T10:36:43+09:00'
+      amount: 10000
+      commission_amount: 200
+      commission_rate: 2.0
+      early_payout_commission_amount: 400
+      early_payout_commission_rate: 4.0
+      id: 9NR3-P9A6
+      payout_date: '2019-04-15'
+      payout_id: 7679-YW36
+      standard_payout_date: '2019-05-01'
+      transaction_id: GY9N-EWNM
+      uri: 'mfk:payout_transaction:9NR3-P9A6'
+  PayoutRefund:
+    description: 売り手さまへの振込後に発生したキャンセルに伴う返金です。
+    type: object
+    properties:
+      amount:
+        description: 返金金額です。
+        type: integer
+        example: 10000
+      commission_amount:
+        description: 手数料の金額です。
+        type: integer
+        x-nullable: true
+        example: 100
+      customer_id:
+        type: string
+        description: 顧客IDです。この返金が紐づく顧客を示します。
+        example: W463-AA6V
+      id:
+        description: 返金IDです。一意の識別子として自動で付与されます。
+        type: string
+        example: 9NR3-P9A6
+      object:
+        description: このObjectの種別を示します。ここでは必ず`payout_refund`が入ります。
+        type: string
+        enum:
+          - payout_refund
+        example: payout_refund
+      payout_id:
+        description: 返金が含まれる振込のIDです。
+        type: string
+        example: 7679-YW36
+      transaction_id:
+        type: string
+        description: 取引IDです。この返金が紐づく取引を示します。
+        example: GY9N-EWNM
+      uri:
+        type: string
+        description: 返金URIです。すべてのリソースで一意の識別子として自動で付与されます。
+        example: 'mfk:payout_refund:9NR3-P9A6'
+    example:
+      amount: 10000
+      commission_amount: 100
+      customer_id: W463-AA6V
+      id: 9NR3-P9A6
+      object: payout_refund
+      payout_id: 7679-YW36
+      transaction_id: GY9N-EWNM
+      uri: 'mfk:payout_refund:9NR3-P9A6'
+  CustomersList:
+    type: object
+    properties:
+      items:
+        type: array
+        description: 条件に該当する顧客の一覧です。
+        items:
+          $ref: '#/definitions/Customer'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  DestinationsList:
+    type: object
+    properties:
+      items:
+        description: 請求先一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/Destination'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  CustomerExaminationsList:
+    type: object
+    properties:
+      items:
+        description: 与信枠審査一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/CustomerExamination'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  CreditFacilitiesList:
+    type: object
+    properties:
+      items:
+        description: 与信枠一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/CreditFacility'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  TransactionsList:
+    type: object
+    properties:
+      items:
+        description: 取引一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/Transaction'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  BillingsList:
+    type: object
+    properties:
+      items:
+        description: 請求一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/Billing'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  PayoutsList:
+    type: object
+    properties:
+      items:
+        description: 振込一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/Payout'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  PayoutTransactionsList:
+    type: object
+    properties:
+      items:
+        description: 債権一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/PayoutTransaction'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  PayoutRefundsList:
+    type: object
+    properties:
+      items:
+        description: 返金一覧です。
+        type: array
+        items:
+          $ref: '#/definitions/PayoutRefund'
+      object:
+        description: このObjectの種別を示します。ここでは必ず `list`が設定されます。
+        type: string
+        enum:
+          - list
+        example: list
+      pagination:
+        $ref: '#/definitions/Pagination'
+  CreateCustomerResponse:
+    type: object
+    properties:
+      customer:
+        $ref: '#/definitions/Customer'
+      destination:
+        $ref: '#/definitions/Destination'
+parameters:
+  after:
+    description: >-
+      任意のリソースIDを指定します。追加日時の降順でこのIDのリソースよりも後のリソースを取得します。この時`after`で指定したIDのリソースは結果に含まれません。
+    name: after
+    in: query
+    required: false
+    type: string
+  before:
+    description: >-
+      任意のリソースIDを指定します。追加日時の降順でこのIDのリソースよりも前のリソースを取得します。この時`before`で指定したIDのリソースは結果に含まれません。
+    name: before
+    in: query
+    required: false
+    type: string
+  limit:
+    description: >-
+      取得したいリソースの最大件数を指定します。1~200の間の整数で指定してください。指定がない場合は20になります。
+    name: limit
+    in: query
+    required: false
+    type: integer
+    format: int32
+    minimum: 1
+    maximum: 200
+paths:
+  /customers:
+    get:
+      tags:
+        - Customer
+      description: 顧客一覧取得
+      summary: >-
+        顧客の一覧を取得することができます。顧客番号や支払方法、未入金の有無で絞り込んで取得することもできます。
+      operationId: GetCustomersList
+      parameters:
+        - name: number
+          description: 任意の顧客の `number`を指定します。該当する顧客がいる場合、その一件のみが返却されます。
+          type: string
+          in: query
+          required: false
+          maxLength: 100
+        - name: payment_method
+          description: >-
+            支払方法を指定します。該当する支払方法の顧客が返却されます。指定できる値は `bank_transfer`(銀行振込),
+            `account_transfer`(口座振替)の２種類のみです。支払方法は複数指定することができます。
+            複数指定する場合は`?payment_method=bank_transfer&payment_method=account_transfer`のように指定してください。
+          type: array
+          items:
+            type: string
+            enum:
+            - bank_transfer
+            - account_transfer
+          in: query
+          required: false
+        - name: has_alert
+          description: アラートの有無をboolean値で指定します。`true`の場合アラート有り、`false`の場合はアラート無しを表します。
+          type: boolean
+          in: query
+          required: false
+        - name: created_at_from
+          description: >-
+            指定された日時以降に作成された顧客を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: created_at_to
+          description: >-
+            指定された日時以前に作成された顧客を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 顧客一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/CustomersList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+    post:
+      tags:
+        - Customer
+      description: 顧客登録
+      summary: >-
+        顧客を登録することができます。顧客には必ず一つの請求先が必要であるため同時に請求先一件も登録します。
+      operationId: CreateCustomer
+      parameters:
+        - name: payload
+          description: 顧客登録情報です。請求先情報も含まれています。
+          schema:
+            $ref: '#/definitions/CustomerPayload'
+          in: body
+          required: true
+      responses:
+        '200':
+          description: 作成された顧客が返却されます。
+          schema:
+            $ref: '#/definitions/CreateCustomerResponse'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: 登録しようとした顧客と一致する顧客が既に登録されている場合のエラーです。指定した`number`や、その他住所・電話番号などが既に登録済みでないか確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /customers/{customer_id}:
+    parameters:
+      - name: customer_id
+        description: 対象の顧客IDを指定してください。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - Customer
+      description: 顧客取得
+      summary: >-
+        顧客IDを指定して対象顧客１件を取得することができます。
+      operationId: GetCustomer
+      responses:
+        '200':
+          description: 指定した顧客が返却されます。
+          schema:
+            $ref: '#/definitions/Customer'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 顧客IDで指定した顧客が存在しない場合のエラーです。Errorのparamには指定した顧客IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+    patch:
+      tags:
+        - Customer
+      description: 顧客更新
+      summary: >-
+        顧客の情報を更新することができます。
+      operationId: UpdateCustomer
+      parameters:
+        - name: payload
+          description: 顧客更新情報です。
+          schema:
+            $ref: '#/definitions/CustomerUpdatePayload'
+          in: body
+          required: true
+      responses:
+        '200':
+          description: 更新した顧客が返却されます。
+          schema:
+            $ref: '#/definitions/Customer'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 顧客IDで指定した顧客が存在しない場合のエラーです。Errorのparamには指定した顧客IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /customers/{customer_id}/bank_transfer:
+    parameters:
+      - name: customer_id
+        description: 対象の顧客IDを指定してください。
+        type: string
+        in: path
+        required: true
+    post:
+      tags:
+        - Customer
+      description: 振込先口座割り当て
+      summary: >-
+        対象顧客１件に振込先口座番号を未割り当ての場合、割り当てます。
+      operationId: AssignBankTransfer
+      responses:
+        '200':
+          description: 割り当てられた振込先口座情報が返却されます。
+          schema:
+            $ref: '#/definitions/BankTransfer'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 顧客IDで指定した顧客が存在しない場合のエラーです。Errorのparamには指定した顧客IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: 振込先口座を割り当てようとした顧客がすでに割り当て済みの場合のエラーです。
+          schema:
+            $ref: '#/definitions/Errors'
+  /destinations:
+    get:
+      tags:
+        - Destination
+      description: 請求先一覧取得
+      summary: >-
+        請求先の一覧を取得します。顧客IDや顧客番号で特定の顧客に紐づく請求先に絞り込んで取得することもできます。
+      operationId: GetDestinationsList
+      parameters:
+        - name: customer_id
+          description: 顧客IDを指定します。指定された顧客の請求先を取得します。`customer_number`に別の顧客の顧客番号を指定した場合には該当請求先は0件になります。
+          type: string
+          in: query
+          required: false
+        - name: customer_number
+          description: 顧客番号を指定します。指定された顧客の請求先を取得します。`customer_id`に別の顧客の顧客IDを指定した場合には該当請求先は0件になります。
+          type: string
+          in: query
+          required: false
+          maxLength: 100
+        - name: created_at_from
+          description: >-
+            指定された日時以降に作成された請求先を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: created_at_to
+          description: >-
+            指定された日時以前に作成された請求先を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 請求先一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/DestinationsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+    post:
+      tags:
+        - Destination
+      description: 請求先登録
+      summary: >-
+        顧客を指定して請求先を登録することができます。
+        <aside class="info">請求先は更新ができません。更新したい場合は新規登録をしてご利用ください。</aside>
+      operationId: CreateDestination
+      parameters:
+        - name: payload
+          description: 請求先登録情報です。
+          schema:
+            $ref: '#/definitions/DestinationPayload'
+          in: body
+          required: true
+      responses:
+        '200':
+          description: 登録した請求先が返却されます。
+          schema:
+            $ref: '#/definitions/Destination'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 顧客IDで指定した顧客が存在しない場合のエラーです。Errorのparamには指定した顧客IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: 登録しようとした請求先と一致する請求先が既に登録されている場合のエラーです。住所・電話番号などが既に登録済みでないか確認してください。Errorのparamには登録済みの請求先IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /destinations/{destination_id}:
+    parameters:
+      - name: destination_id
+        description: 対象の請求先IDを指定してください。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - Destination
+      description: 請求先取得
+      summary: >-
+        請求先IDを指定して対象請求先１件を取得することができます。
+      operationId: GetDestination
+      responses:
+        '200':
+          description: 指定した請求先が返却されます。
+          schema:
+            $ref: '#/definitions/Destination'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 請求先IDで指定した請求先が存在しない場合のエラーです。Errorのparamには指定した請求先IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /customer_examinations:
+    get:
+      tags:
+        - CustomerExamination
+      description: 与信枠審査一覧取得
+      summary: >-
+        与信枠審査の一覧を取得します。顧客IDやステータスで絞り込んで取得することもできます。
+      operationId: GetCustomerExaminationsList
+      parameters:
+        - name: customer_id
+          description: 顧客IDを指定します。指定された顧客に対する与信枠審査を取得します。
+          type: string
+          in: query
+          required: false
+        - name: customer_number
+          description: 顧客番号を指定します。
+          type: string
+          in: query
+          required: false
+          maxLength: 100
+        - name: status
+          description: >-
+            与信枠審査のステータスを指定します。未審査(`unexamined`)、審査通過(`passed`)、審査否決(`rejected`)のいずれかを指定してください。
+          type: string
+          enum:
+            - passed
+            - rejected
+            - unexamined
+          in: query
+          required: false
+        - name: created_at_from
+          description: >-
+            指定された日時以降に作成された与信枠審査を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: created_at_to
+          description: >-
+            指定された日時以前に作成された与信枠審査を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 与信枠審査一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/CustomerExaminationsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+    post:
+      tags:
+        - CustomerExamination
+      description: 与信枠審査申請
+      summary: >-
+        顧客を指定して与信枠審査を申請することができます。最長で申請後2営業日以内に審査いたします。<br>
+        自動与信枠審査をご利用の場合、こちらで増枠した金額は今後の与信枠付与に継続して利用されます。また、対象顧客のアラートは解消されます。<br>
+        Sandbox環境では動作テストのため、任意の審査結果を指定することができます。[審査結果の操作](#environment_magic_number)を参照してください。
+      operationId: CreateCustomerExamination
+      parameters:
+        - name: payload
+          description: 与信枠審査申請情報です。
+          schema:
+            $ref: '#/definitions/CustomerExaminationPayload'
+          in: body
+          required: true
+      responses:
+        '200':
+          description: 登録した与信枠審査が返却されます。
+          schema:
+            $ref: '#/definitions/CustomerExamination'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 顧客IDで指定した顧客が存在しない場合のエラーです。Errorのparamには指定した顧客IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: 審査中の与信枠審査が存在している場合のエラーです。審査中は与信枠審査を登録できません。
+          schema:
+            $ref: '#/definitions/Errors'
+  /customer_examinations/{customer_examination_id}:
+    parameters:
+      - name: customer_examination_id
+        description: 対象の与信枠審査IDを指定してください。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - CustomerExamination
+      description: 与信枠審査取得
+      summary: >-
+        与信枠審査IDを指定して対象与信枠審査１件を取得することができます。
+      operationId: GetCustomerExamination
+      responses:
+        '200':
+          description: 指定した与信枠審査が返却されます。
+          schema:
+            $ref: '#/definitions/CustomerExamination'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 与信枠審査IDで指定した与信枠審査が存在しない場合のエラーです。Errorのparamには指定した与信枠審査IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /credit_facilities:
+    get:
+      tags:
+        - CreditFacility
+      description: 与信枠一覧取得
+      summary: >-
+        与信枠の一覧を取得します。顧客IDや取引登録期間開始日・終了日で絞り込んで取得することもできます。
+      operationId: GetCreditFacilitiesList
+      parameters:
+        - name: customer_id
+          description: 顧客IDを指定します。指定された顧客の与信枠を取得します。
+          type: string
+          in: query
+          required: false
+        - name: customer_number
+          description: 顧客番号を指定します。 指定された顧客の与信枠を取得します。
+          type: string
+          in: query
+          required: false
+          maxLength: 100
+        - name: customer_examination_id
+          description: 与信枠審査IDを指定します。指定された与信枠審査によって付与された与信枠を取得します。
+          type: string
+          in: query
+          required: false
+        - name: status
+          description: >-
+            ステータスを指定します。該当するステータスの与信枠が返却されます。指定できる値は `expired`(期限切れ),
+            `active`(適用中), `inactive`(未適用), の３種類のみです。ステータスは複数指定することができます。
+            複数指定する場合は`?status=expired&status=active`もしくは`?status=expired,active`のように指定してください。
+          type: array
+          items:
+            type: string
+            enum:
+              - expired
+              - active
+              - inactive
+          in: query
+          required: false
+        - name: start_date_from
+          description: 取引登録期間開始日が指定された日時よりも後の与信枠を取得します。指定された日時のものも含まれます。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: start_date_to
+          description: 取引登録期間開始日が指定された日時よりも前の与信枠を取得します。指定された日時のものも含まれます。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: end_date_from
+          description: 取引登録期間終了日が指定された日時よりも後の与信枠を取得します。指定された日時のものも含まれます。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: end_date_to
+          description: 取引登録期間終了日が指定された日時よりも前の与信枠を取得します。指定された日時のものも含まれます。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 与信枠一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/CreditFacilitiesList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /credit_facilities/{credit_facility_id}:
+    parameters:
+      - name: credit_facility_id
+        description: 対象の与信枠IDを指定してください。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - CreditFacility
+      description: 与信枠取得
+      summary: >-
+        与信枠IDを指定して対象与信枠１件を取得することができます。
+      operationId: GetCreditFacility
+      responses:
+        '200':
+          description: 指定した与信枠が返却されます。
+          schema:
+            $ref: '#/definitions/CreditFacility'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 与信枠IDで指定した与信枠が存在しない場合のエラーです。Errorのparamには指定した与信枠IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /transactions:
+    get:
+      tags:
+        - Transaction
+      description: 取引一覧取得
+      operationId: GetTransactionsList
+      parameters:
+        - name: number
+          description: >-
+            任意の取引の `number`を指定します。該当する取引がある場合、その一件のみが返却されます。
+          type: string
+          maxLength: 100
+          in: query
+          required: false
+        - name: customer_id
+          description: 任意の顧客IDを指定します。指定した顧客に対する取引が返却されます。
+          type: string
+          in: query
+          required: false
+        - name: customer_number
+          description: 顧客番号を指定します。指定された顧客の取引を取得します。
+          type: string
+          maxLength: 100
+          in: query
+          required: false
+        - name: billing_id
+          description: 任意の請求IDを指定します。指定した請求に含まれる取引が返却されます。
+          type: string
+          in: query
+          required: false
+        - name: status
+          description: >-
+            取引のステータスを指定します。未審査(`unexamined`)、審査通過(`passed`)、審査否決(`rejected`)、キャンセル済み(`canceled`)のいずれかを指定してください。
+          type: string
+          enum:
+            - unexamined
+            - passed
+            - rejected
+            - canceled
+          in: query
+          required: false
+        - name: billing
+          description: >-
+            請求対象であるかどうかを指定します。請求対象(`true`)、請求対象外(`false`)のいずれかを指定してください。
+            詳しくは[請求対象とは](https://support.mfkessai.co.jp/hc/ja/articles/900002241626)を参照してください。
+          type: boolean
+          in: query
+          required: false
+        - name: date_from
+          description: >-
+            取引日が指定された日付以降の取引を取得します。指定された日付が取引日のものも含まれます。
+            RFC3339の`full-time`(2019-04-01)で指定してください。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: date_to
+          description: >-
+            取引日が指定された日付以前の取引を取得します。指定された日付が取引日のものも含まれます。
+            RFC3339の`full-time`(2019-04-01`)で指定してください。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: created_at_from
+          description: >-
+            指定された日時以降に作成された取引を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: created_at_to
+          description: >-
+            指定された日時以前に作成された取引を取得します。指定された日時に作成されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: canceled_at_from
+          description: >-
+            指定された日時以降にキャンセルされた取引を取得します。指定された日時にキャンセルされたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: canceled_at_to
+          description: >-
+            指定された日時以前にキャンセルされた取引を取得します。指定された日時にキャンセルされたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: accepted_at_from
+          description: >-
+            指定された日時以降に債権譲受された取引を取得します。指定された日時に債権譲受されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: accepted_at_to
+          description: >-
+            指定された日時以前に債権譲受された取引を取得します。指定された日時に債権譲受されたものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: billing_accepted_at_from
+          description: >-
+            指定された日時以降に請求依頼を受領した取引を取得します。指定された日時に請求依頼を受領したものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - name: billing_accepted_at_to
+          description: >-
+            指定された日時以前に請求依頼を受領した取引を取得します。指定された日時に請求依頼を受領したものも含まれます。
+            RFC3339の`date-time`(2019-04-01T10:36:43%2B09:00)で指定してください。
+          type: string
+          format: date-time
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 取引一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/TransactionsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+    post:
+      tags:
+        - Transaction
+      description: 取引登録
+      summary: >-
+        請求先を指定して取引を登録できます。最長で申請後2営業日以内に審査いたします。<br>
+        Sandbox環境では動作テストのため、任意の審査結果を指定することができます。[審査結果の操作](#environment_magic_number)を参照してください。
+      operationId: CreateTransaction
+      parameters:
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionPayload'
+      responses:
+        '200':
+          description: 作成した取引が返却されます。
+          schema:
+            $ref: '#/definitions/Transaction'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 請求先IDで指定した請求先が存在しない場合のエラーです。Errorのparamには指定した請求先IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: 登録しようとした取引と一致する取引が既に登録されている場合のエラーです。指定した`number`が既に登録済みでないか確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /transactions/{transaction_id}:
+    parameters:
+      - name: transaction_id
+        description: 対象の取引IDを指定してください。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - Transaction
+      description: 取引取得
+      operationId: GetTransaction
+      responses:
+        '200':
+          description: 指定した取引が返却されます。
+          schema:
+            $ref: '#/definitions/Transaction'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 取引IDで指定した取引が存在しない場合のエラーです。Errorのparamには指定した取引IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+    delete:
+      tags:
+        - Transaction
+      description: 取引キャンセル
+      summary: 取引の状態によってはキャンセルができない場合もあります。<a target="_blank" href="https://support.mfkessai.co.jp/hc/ja/articles/900002235166-%E5%8F%96%E5%BC%95%E3%81%AE%E3%82%AD%E3%83%A3%E3%83%B3%E3%82%BB%E3%83%AB">キャンセルについて</a>を参照してください。
+      operationId: CancelTransaction
+      responses:
+        '200':
+          description: キャンセルした取引が返却されます。
+          schema:
+            $ref: '#/definitions/Transaction'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '409':
+          description: キャンセルしようとした取引が既にキャンセルされている場合のエラーです。
+          schema:
+            $ref: '#/definitions/Errors'
+  /billings:
+    get:
+      tags:
+        - Billing
+      description: 請求一覧取得
+      operationId: GetBillingsList
+      parameters:
+        - name: customer_id
+          description: 任意の顧客IDを指定します。指定した顧客への請求が返却されます。
+          type: string
+          in: query
+          required: false
+        - name: customer_number
+          description: 顧客番号を指定します。指定された顧客の請求を取得します。
+          type: string
+          maxLength: 100
+          in: query
+          required: false
+        - name: status
+          description: >-
+            請求ステータスを指定します。該当するステータスの請求が返却されます。複数指定することが可能です。指定できる値は `scheduled`(請求予定),
+            `invoice_issued`(請求書発行済), `account_transfer_notified`(口座振替通知済)の3種類のみです。
+          type: array
+          items:
+            type: string
+            enum:
+              - scheduled
+              - invoice_issued
+              - account_transfer_notified
+          in: query
+          required: false
+        - name: due_date_from
+          description: >-
+            日付を指定します。指定した日付以降の支払期限となっている請求を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: due_date_to
+          description: >-
+            日付を指定します。指定した日付以前の支払期限となっている請求を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: issue_date_from
+          description: >-
+            日付を指定します。指定した日付以降の請求書発行日となっている請求を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: issue_date_to
+          description: >-
+            日付を指定します。指定した日付以前の請求書発行日となっている請求を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: unpaid
+          description: 未入金のあり(`true`)、なし(`false`)を指定します。空文字が指定された場合、`false`として扱われます。
+          type: boolean
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 請求一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/BillingsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /billings/{billing_id}:
+    parameters:
+      - name: billing_id
+        in: path
+        required: true
+        description: 対象の請求IDを指定してください。
+        type: string
+    get:
+      tags:
+        - Billing
+      description: 請求取得
+      operationId: GetBilling
+      responses:
+        '200':
+          description: 指定した請求が返却されます。
+          schema:
+            $ref: '#/definitions/Billing'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 請求IDで指定した請求が存在しない場合のエラーです。Errorのparamには指定した請求IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /payouts:
+    get:
+      tags:
+        - Payout
+      description: 振込一覧取得
+      operationId: GetPayoutsList
+      parameters:
+        - name: status
+          description: >-
+            振込ステータスを指定します。該当するステータスの振込が返却されます。指定できる値は `in_progress`(振込手続中),
+            `completed`(振込完了)の2種類のみです。
+          type: array
+          items:
+            type: string
+            enum:
+              - in_progress
+              - completed
+          in: query
+          required: false
+        - name: payout_date_from
+          description: >-
+            日付を指定します。指定した日付以降の振込予定日となっている振込を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - name: payout_date_to
+          description: >-
+            日付を指定します。指定した日付以前の振込予定日となっている振込を取得できます。指定された日付のものも含まれます。
+          type: string
+          format: date
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 振込一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/PayoutsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /payouts/{payout_id}:
+    parameters:
+      - name: payout_id
+        description: 対象の振込ID。
+        type: string
+        in: path
+        required: true
+    get:
+      tags:
+        - Payout
+      description: 振込取得
+      operationId: GetPayout
+      responses:
+        '200':
+          description: 指定した振込が返却されます。
+          schema:
+            $ref: '#/definitions/Payout'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 振込IDで指定した振込が存在しない場合のエラーです。Errorのparamには指定した振込IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /payout_transactions:
+    get:
+      tags:
+        - PayoutTransaction
+      description: 債権一覧取得
+      operationId: GetPayoutTransactionsList
+      parameters:
+        - name: payout_id
+          description: 任意の振込IDを指定します。指定した振込に含まれる債権が返却されます。
+          type: string
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 債権一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/PayoutTransactionsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+  /payout_transactions/{payout_transaction_id}:
+    parameters:
+      - name: payout_transaction_id
+        in: path
+        required: true
+        description: 取得したい債権のID。
+        type: string
+    get:
+      tags:
+        - PayoutTransaction
+      description: 債権取得
+      operationId: GetPayoutTransaction
+      responses:
+        '200':
+          description: 指定した債権が返却されます。
+          schema:
+            $ref: '#/definitions/PayoutTransaction'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'
+        '404':
+          description: 債権IDで指定した債権が存在しない場合のエラーです。Errorのparamには指定した債権IDが入ります。
+          schema:
+            $ref: '#/definitions/Errors'
+  /payout_refunds:
+    get:
+      tags:
+        - PayoutRefund
+      description: 返金一覧取得
+      operationId: GetPayoutRefundsList
+      parameters:
+        - name: payout_id
+          description: 任意の振込IDを指定します。指定した振込に含まれる返金が返却されます。
+          type: string
+          in: query
+          required: false
+        - $ref: '#/parameters/after'
+        - $ref: '#/parameters/before'
+        - $ref: '#/parameters/limit'
+      responses:
+        '200':
+          description: 返金一覧とページネーション情報です。
+          schema:
+            $ref: '#/definitions/PayoutRefundsList'
+        '400':
+          description: リクエスト内容の不備によるエラーです。エラー内容を確認してください。
+          schema:
+            $ref: '#/definitions/Errors'

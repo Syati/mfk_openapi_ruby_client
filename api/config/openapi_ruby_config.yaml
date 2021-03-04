@@ -1,0 +1,4 @@
+# Property Documents
+# https://openapi-generator.tech/docs/generators/ruby/
+additionalProperties:
+  gemName: mfk_openapi_ruby_client
