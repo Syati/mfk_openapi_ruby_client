@@ -13,3 +13,6 @@ help: ## print this message
 
 generate: ## create ruby client ## client/ruby/generate
 	docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli:v5.0.1 generate -i /local/api/swagger.yaml -g ruby -o /local/ -c /local/api/config/openapi_ruby_config.yaml
+
+test:
+	bundle exec rspec

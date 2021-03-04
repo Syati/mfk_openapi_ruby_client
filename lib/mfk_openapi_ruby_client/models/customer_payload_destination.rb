@@ -173,7 +173,7 @@ module MfkOpenapiRubyClient
       end
 
       if !@cc_emails.nil? && @cc_emails.length > 4
-        invalid_properties.push('invalid value for "cc_emails", number of items must be less than or equal to 4.'
+        invalid_properties.push('invalid value for "cc_emails", number of items must be less than or equal to 4.')
       end
 
       if !@department.nil? && @department.to_s.length > 50

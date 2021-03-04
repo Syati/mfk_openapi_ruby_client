@@ -171,7 +171,7 @@ module MfkOpenapiRubyClient
       end
 
       if @amounts_per_tax_rate_type.length < 1
-        invalid_properties.push('invalid value for "amounts_per_tax_rate_type", number of items must be greater than or equal to 1.'
+        invalid_properties.push('invalid value for "amounts_per_tax_rate_type", number of items must be greater than or equal to 1.')
       end
 
       if @date.nil?
@@ -195,11 +195,11 @@ module MfkOpenapiRubyClient
       end
 
       if @invoice_delivery_methods.length > 2
-        invalid_properties.push('invalid value for "invoice_delivery_methods", number of items must be less than or equal to 2.'
+        invalid_properties.push('invalid value for "invoice_delivery_methods", number of items must be less than or equal to 2.')
       end
 
       if @invoice_delivery_methods.length < 1
-        invalid_properties.push('invalid value for "invoice_delivery_methods", number of items must be greater than or equal to 1.'
+        invalid_properties.push('invalid value for "invoice_delivery_methods", number of items must be greater than or equal to 1.')
       end
 
       if @issue_date.nil?
@@ -223,11 +223,11 @@ module MfkOpenapiRubyClient
       end
 
       if @transaction_details.length > 500
-        invalid_properties.push('invalid value for "transaction_details", number of items must be less than or equal to 500.'
+        invalid_properties.push('invalid value for "transaction_details", number of items must be less than or equal to 500.')
       end
 
       if @transaction_details.length < 1
-        invalid_properties.push('invalid value for "transaction_details", number of items must be greater than or equal to 1.'
+        invalid_properties.push('invalid value for "transaction_details", number of items must be greater than or equal to 1.')
       end
 
       invalid_properties
