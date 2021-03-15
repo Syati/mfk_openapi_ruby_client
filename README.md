@@ -79,9 +79,16 @@ require 'mfk_openapi_ruby_client'
 # Setup authorization
 MfkOpenapiRubyClient.configure do |config|
   # Configure API key authorization: apikey
+
   config.api_key['apikey'] = 'YOUR API KEY'
   # Uncomment the following line to set a prefix for the API key, e.g. 'Bearer' (defaults to nil)
   # config.api_key_prefix['apikey'] = 'Bearer'
+  
+  # if you want to override host, set server_index = nil  
+  #  https://github.com/Syati/mfk_openapi_ruby_client/blob/a4197a767fe79303e9c15e2595c13d89f93a023b/lib/mfk_openapi_ruby_client/configuration.rb#L192
+  # 
+  # config.server_index = nil 
+  # config.host = "prod.example.com."
 end
 
 api_instance = MfkOpenapiRubyClient::BillingApi.new
